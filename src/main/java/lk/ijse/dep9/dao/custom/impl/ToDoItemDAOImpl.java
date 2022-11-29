@@ -69,7 +69,7 @@ public class ToDoItemDAOImpl implements ToDoItemDAO {
                 int id = rst.getInt(1);
                 String username = rst.getString("user_name");
                 String description = rst.getString("description");
-                Status status = rst.getString("status");
+                Status status = Status.valueOf(rst.getString("status"));
                 toDoItemList.add(new ToDoItem(id, username,description,status));
             }
             return toDoItemList;
@@ -82,23 +82,62 @@ public class ToDoItemDAOImpl implements ToDoItemDAO {
     public Optional<ToDoItem> getById(Integer id) {
         try {
             PreparedStatement stm = connection.prepareStatement("SELECT * FROM ToDoItem WHERE id = ?");
+            stm.setInt(1, id);
+            ResultSet rst = stm.executeQuery();
+            if (rst.next()){
+                String username = rst.getString("user_name");
+                String description = rst.getString("description");
+                Status status = Status.valueOf(rst.getString("status"));
+                return Optional.of(new ToDoItem(id, username,description,status));
+            }else{
+                return Optional.empty();
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public ToDoItem save(ToDoItem entity) {
-        return null;
+    public ToDoItem save(ToDoItem toDoItem) {
+        try {
+            PreparedStatement stm = connection.prepareStatement("INSERT INTO ToDoItem (user_name, description, status) VALUES (?, ?, ?)");
+            stm.setString(1, toDoItem.getUserName());
+            stm.setString(2, toDoItem.getDescription());
+            stm.setString(3, String.valueOf(toDoItem.getStatus()));
+            int affectedRows = stm.executeUpdate();
+            if (affectedRows == 1){
+                return toDoItem;
+            }else {
+                throw new SQLException("Failed to save the Issue Note");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public ToDoItem update(ToDoItem entity) {
-        return null;
+    public ToDoItem update(ToDoItem toDoItem) {
+        try {
+            PreparedStatement stm = connection.prepareStatement("UPDATE ToDoItem SET description = ?, status = ? WHERE id = ? OR user_name = ?");
+            stm.setInt(1, toDoItem.getId());
+            stm.setString(2, toDoItem.getUserName());
+            if (stm.executeUpdate() == 1){
+                return toDoItem;
+            }else{
+                throw new SQLException("Failed to update the To Do Item");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     @Override
     public void deleteAllToDos() {
-
+        try {
+            PreparedStatement stm = connection.prepareStatement("DELETE FROM ToDoItem");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
