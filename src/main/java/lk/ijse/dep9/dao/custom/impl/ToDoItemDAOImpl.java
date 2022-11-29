@@ -69,8 +69,8 @@ public class ToDoItemDAOImpl implements ToDoItemDAO {
                 int id = rst.getInt(1);
                 String username = rst.getString("user_name");
                 String description = rst.getString("description");
-                Status status = rst.getString("status");
-                toDoItemList.add(new ToDoItem(id, username,description,status));
+                String status = rst.getString("status");
+//                toDoItemList.add(new ToDoItem(id, username,description,status));
             }
             return toDoItemList;
         } catch (SQLException e) {
@@ -85,6 +85,7 @@ public class ToDoItemDAOImpl implements ToDoItemDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        return null;
     }
 
     @Override

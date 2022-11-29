@@ -17,7 +17,7 @@ INSERT INTO User (user_name, password, full_name) VALUES ('u001', 'danula123', '
                                                          ('u003', '567', 'Nimal'),
                                                          ('u005', 'era123', 'Eranga Bandara');
 
-INSERT INTO ToDoItem (user_name, description, status) VALUE
+INSERT INTO ToDoItem (user_name, description, status) VALUES
 ('u001', 'learn Angular', 'NOT-DONE'),
 ('u003', 'learn React', 'NOT-DONE'),
 ('u005', 'learn JavaEE', 'DONE');
