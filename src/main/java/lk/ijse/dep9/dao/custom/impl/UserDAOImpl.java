@@ -1,6 +1,7 @@
 package lk.ijse.dep9.dao.custom.impl;
 
 import lk.ijse.dep9.dao.custom.UserDAO;
+import lk.ijse.dep9.dao.exception.ConstraintViolationException;
 import lk.ijse.dep9.entity.User;
 
 import java.sql.Connection;
@@ -45,6 +46,7 @@ public class UserDAOImpl implements UserDAO {
 
 
         } catch (SQLException e) {
+            if (existById(userName)) throw new ConstraintViolationException("User id still used in other tables",e);
             throw new RuntimeException(e);
         }
 
@@ -139,7 +141,21 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public User update(User user) {
 
+        try {
+            PreparedStatement stm = connection.prepareStatement("UPDATE User SET password= ?, full_name=? WHERE user_name = ?");
+            stm.setString(1, user.getPassword());
+            stm.setString(2,user.getFull_name());
+            stm.setString(3,user.getUser_name());
 
+
+            if (stm.executeUpdate() ==1){
+                return user;
+
+            }else throw new SQLException("Failed to update member");
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
 
     }
