@@ -1,12 +1,14 @@
 package lk.ijse.dep9.dao.custom.impl;
 
 import lk.ijse.dep9.dao.custom.UserDAO;
+import lk.ijse.dep9.dao.exception.ConstraintViolationException;
 import lk.ijse.dep9.entity.User;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +32,7 @@ public class UserDAOImpl implements UserDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-    }
+    } //Done
 
     @Override
     public void deleteById(String userName) {
@@ -44,10 +46,11 @@ public class UserDAOImpl implements UserDAO {
 
 
         } catch (SQLException e) {
+            if (existById(userName)) throw new ConstraintViolationException("User id still used in other tables",e);
             throw new RuntimeException(e);
         }
 
-    }
+    } //Done
 
     @Override
     public boolean existById(String userName) {
@@ -65,26 +68,96 @@ public class UserDAOImpl implements UserDAO {
         }
 
 
-    }
+    } //Done
 
     @Override
     public List findAll() {
-        return null;
+        try {
+            PreparedStatement stm = connection.prepareStatement("SELECT * FROM User");
+            ResultSet rst = stm.executeQuery();
+
+            ArrayList<User> users = new ArrayList<>();
+
+            while (rst.next()){
+                String user_name = rst.getString("user_name");
+                String full_name = rst.getString("full_name");
+                String password = rst.getString("password");
+
+                users.add(new User(user_name,password,full_name));
+            }
+
+            return users;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    } //Done
+
+    @Override
+    public Optional<User> getById(String userName) {
+
+        try {
+            PreparedStatement stm = connection.prepareStatement("SELECT * FROM User WHERE user_name = ?");
+            stm.setString(1,userName);
+
+            ResultSet rst = stm.executeQuery();
+
+            if (rst.next()) {
+                return Optional.of(new User(rst.getString("user_name"),rst.getString("password"),rst.getString("full_name")));
+            } else {
+
+                return Optional.empty();
+            }
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+
+    } //Done
+
+    @Override
+    public User save(User user) {
+
+        try {
+            PreparedStatement stm = connection.prepareStatement("INSERT INTO User(user_name, password, full_name) VALUES (?,?,?)");
+            stm.setString(1, user.getUser_name());
+            stm.setString(2, user.getPassword());
+            stm.setString(3, user.getFull_name());
+
+            if (stm.executeUpdate() ==1){
+                return user;
+            }else throw new SQLException("Failed to save the new User");
+
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     @Override
-    public Optional<User> getById(String PK) {
-        return Optional.empty();
-    }
+    public User update(User user) {
 
-    @Override
-    public User save(User entity) {
-        return null;
-    }
+        try {
+            PreparedStatement stm = connection.prepareStatement("UPDATE User SET password= ?, full_name=? WHERE user_name = ?");
+            stm.setString(1, user.getPassword());
+            stm.setString(2,user.getFull_name());
+            stm.setString(3,user.getUser_name());
 
-    @Override
-    public User update(User entity) {
-        return null;
+
+            if (stm.executeUpdate() ==1){
+                return user;
+
+            }else throw new SQLException("Failed to update member");
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+
     }
 }
 
