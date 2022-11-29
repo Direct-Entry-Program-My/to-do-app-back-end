@@ -20,6 +20,7 @@ public class UserDTO {
     private String password;
 
     @NotBlank
+    @Pattern(regexp = "[A-Za-z ]+")
     private String full_name;
 
 
