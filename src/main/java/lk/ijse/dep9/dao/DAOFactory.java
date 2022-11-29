@@ -12,6 +12,10 @@ public class DAOFactory {
     public DAOFactory() {
     }
 
+    public static DAOFactory getInstance(){
+        return (daoFactory == null)? daoFactory = new DAOFactory():daoFactory;
+    }
+
 
 
 
