@@ -1,4 +1,6 @@
 package lk.ijse.dep9.dao;
 
-public interface SuperDAO {
+import java.io.Serializable;
+
+public interface SuperDAO extends Serializable {
 }
