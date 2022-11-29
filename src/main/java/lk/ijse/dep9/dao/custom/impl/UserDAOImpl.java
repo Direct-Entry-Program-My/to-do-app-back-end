@@ -36,12 +36,11 @@ public class UserDAOImpl implements UserDAO {
     public void deleteById(String userName) {
         try {
             PreparedStatement stm = connection.prepareStatement("DELETE FROM User WHERE user_name = ?");
-            if (stm.executeUpdate() == 1){
+            if (stm.executeUpdate() == 1) {
                 return;
-            }else {
+            } else {
                 throw new SQLException("Failed to delete the User");
             }
-
 
 
         } catch (SQLException e) {
@@ -55,7 +54,7 @@ public class UserDAOImpl implements UserDAO {
 
         try {
             PreparedStatement stm = connection.prepareStatement("SELECT * FROM User WHERE user_name = ?");
-            stm.setString(1,userName);
+            stm.setString(1, userName);
             ResultSet rst = stm.executeQuery();
 
             return rst.next();
@@ -87,5 +86,6 @@ public class UserDAOImpl implements UserDAO {
     public User update(User entity) {
         return null;
     }
+}
 
 
