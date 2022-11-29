@@ -11,3 +11,13 @@ CREATE TABLE ToDoItem(
   status ENUM('DONE', 'NOT-DONE') NOT NULL,
   CONSTRAINT FOREIGN KEY (user_name) REFERENCES User(user_name)
 );
+
+INSERT INTO User (user_name, password, full_name) VALUES ('u001', 'danula123', 'Danula Balasooriya'),
+                                                         ('u002', '12345', 'Kamal Gunarathna'),
+                                                         ('u003', '567', 'Nimal'),
+                                                         ('u005', 'era123', 'Eranga Bandara');
+
+INSERT INTO ToDoItem (user_name, description, status) VALUE
+('u001', 'learn Angular', 'NOT-DONE'),
+('u003', 'learn React', 'NOT-DONE'),
+('u005', 'learn JavaEE', 'DONE');
